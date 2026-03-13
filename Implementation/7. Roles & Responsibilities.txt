@@ -1,0 +1,17 @@
+MARCH-2025 - March-2026
+Roles & Responsibilities (DevOps Engineer)
+- Managed source code via GitHub and maintained environment configs.
+- Provisioned and secured AWS EC2 instances for deployment.
+- Containerized app with Docker and orchestrated services using Docker Compose.
+- Automated CI/CD pipelines with Jenkins for build, test, and deploy.
+- Handled MongoDB data import/export and environment management.
+- Documented setup and deployment processes for smooth collaboration.
+
+Tools Used:
+- Source Code Management: GitHub
+- Cloud Infrastructure: AWS EC2
+- Containerization: Docker, Docker Compose
+- CI/CD: Jenkins
+- Database: MongoDB (via Docker container & Compass for local testing)
+Roles & Responsibilities (DevOps Engineer) - Managed source code via GitHub and maintained environment configs. - Provisioned and secured AWS EC2 instances for deployment. - Containerized app with Docker and orchestrated services using Docker Compose. - Automated CI/CD pipelines with Jenkins for build, test, and deploy. - Handled MongoDB data import/export and environment management. - Documented setup and deployment processes for smooth collaboration. Tools Used: - Source Code Management: GitHub - Cloud Infrastructure: AWS EC2 - Containerization: Docker, Docker Compose - CI/CD: Jenkins - Database: MongoDB (via Docker container & Compass for local testing)
+Skills: GitHub · Amazon Web Services (AWS) · Jenkins · Docker

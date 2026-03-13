@@ -1,0 +1,36 @@
+𝗪𝗮𝗻𝗱𝗲𝗿𝗹𝘂𝘀𝘁 𝗠𝗘𝗥𝗡 𝗦𝘁𝗮𝗰𝗸 𝗔𝗽𝗽𝗹𝗶𝗰𝗮𝘁𝗶𝗼𝗻 — 𝗔 𝗙𝘂𝗹𝗹 𝗗𝗲𝘃𝗦𝗲𝗰𝗢𝗽𝘀 𝗖𝗜/𝗖𝗗 𝗣𝗶𝗽𝗲𝗹𝗶𝗻𝗲
+Every code push triggers the full pipeline automatically!
+𝗧𝗵𝗲 𝗴𝗼𝗮𝗹 𝘄𝗮𝘀𝗻'𝘁 𝗷𝘂𝘀𝘁 𝗮𝘂𝘁𝗼𝗺𝗮𝘁𝗶𝗼𝗻. 𝗜𝘁 𝘄𝗮𝘀 𝘀𝗲𝗰𝘂𝗿𝗲 𝗮𝘂𝘁𝗼𝗺𝗮𝘁𝗶𝗼𝗻.
+
+𝗚𝗶𝘁𝗛𝘂𝗯: https://github.com/juhisinha422/Wanderlust-CI-CD-Project.git
+𝗟𝗶𝘃𝗲 𝗗𝗲𝗺𝗼: http://13.200.17.235:5173/
+
+𝗣𝗥𝗢𝗝𝗘𝗖𝗧 𝗢𝗩𝗘𝗥𝗩𝗜𝗘𝗪
+1.Deployed a full-stack MERN (MongoDB, Express, React, Node.js) Blog application with an end-to-end DevSecOps CI/CD pipeline. 
+2.Every code push automatically triggers the pipeline — code is built, tested, and deployed without any manual intervention.
+
+𝗧𝗘𝗖𝗛 𝗦𝗧𝗔𝗖𝗞
+• Jenkins — CI/CD Automation 
+• Docker — Containerization 
+• Docker Hub — Image Registry (versioned: v1, v2, v3...)
+• SonarQube — Static Code Analysis & Quality Gates 
+• Trivy — Image Security Scanning 
+• GitHub — Source Control + Webhook Trigger
+
+𝗖𝗜/𝗖𝗗 𝗣𝗜𝗣𝗘𝗟𝗜𝗡𝗘 𝗪𝗢𝗥𝗞𝗙𝗟𝗢𝗪
+1. Developer pushes code → GitHub webhook triggers instantly
+2. Jenkins pipeline initiates the automated build
+3. SonarQube scans the code for bugs and security issues
+4. Docker image is built from the verified codebase
+5. Trivy scans the image for vulnerabilities before deployment
+6. Scanned images pushed to Docker Hub with version tags (v1, v2...)
+7. Containers deployed using latest images and application is live in production
+
+𝗦𝗘𝗖𝗨𝗥𝗜𝗧𝗬 𝗜𝗡𝗧𝗘𝗚𝗥𝗔𝗧𝗜𝗢𝗡 (𝗗𝗲𝘃𝗦𝗲𝗰𝗢𝗽𝘀)
+• SonarQube runs static code analysis and blocks the pipeline if code quality gates fail. 
+• Trivy scans every Docker image for vulnerabilities before pushing to the registry ,ensuring only clean and safe images reach deployment.
+
+𝗢𝗨𝗧𝗖𝗢𝗠𝗘𝗦
+• Fully automated, zero-touch deployments on every push 
+• Security vulnerabilities caught at build time 
+• Versioned Docker images ensuring instant rollback capability 

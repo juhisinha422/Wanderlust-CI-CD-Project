@@ -1,0 +1,17 @@
+🚀 Just Built a Full-Fledged CI/CD Pipeline for Wanderlust! 🌍🎥
+Super excited to share that we’ve successfully implemented a robust and secure CI/CD pipeline for our vlogging application Wanderlust! This project was a deep dive into modern DevSecOps practices and cloud-native tooling. Here's a quick overview of what we achieved:
+🔧 Tech Stack Highlights:
+🐳 Multistage Docker Builds for optimized image creation
+🔁 Jenkins CI for seamless integration and automation
+🚀 ArgoCD for declarative, GitOps-based Continuous Delivery
+☁️ Deployed on Amazon EKS for scalability and resilience
+🛡️ Security First with DevSecOps:
+✅ SonarQube for code quality and static analysis
+🕷️ OWASP Dependency-Check for vulnerability scanning
+🔍 Trivy for container image security
+📈 Prometheus collects metrics from the EKS cluster.
+📊 Grafana visualizes those metrics for real-time monitoring and alerting.
+
+📬 Bonus: Email notifications on successful pipeline execution to keep the team in the loop!
+🙏 A huge shoutout to Shubham Bhaiya Shubham Londhe for guiding and mentoring throughout this journey. Your insights made this possible! 💡
+📂 Check out the GitHub repo for all the details and code: https://github.com/juhisinha422/Wanderlust-Mega-Project

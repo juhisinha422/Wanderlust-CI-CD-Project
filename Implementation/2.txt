@@ -1,0 +1,444 @@
+Capstone DevSecOps & Cloud DevOps Project
+
+Bringing DevSecOps and Cloud DevOps Together: Real-World Capstone Experience
+
+Capstone Project Flow & Technologies
+
+Phases of the Project:
+
+Phase 1:
+Setup GitHub repositories.
+
+Phase 2: Infrastructure Setup
+Create a Virtual Machine (VM) (let’s call it VM1).
+
+This VM will act as your main machine for managing Kubernetes clusters.
+
+Inside VM1, we’ll install:
+
+Terraform: To write Infrastructure as Code (IaC) and deploy resources (like EKS clusters).
+AWS CLI: To talk to AWS cloud.
+eksctl: AWS-specific CLI to manage EKS (Elastic Kubernetes Service) clusters.
+Helm: Package manager for Kubernetes (helps install tools like Prometheus, Grafana).
+kubectl: To interact with the Kubernetes cluster.
+Why separate VM? Because it’s common to have a dedicated “jump box” to run cluster management commands.
+
+Phase 3: CI/CD Pipeline Setup
+Use Jenkins for setting up CI/CD pipelines.
+Pipeline Flow:
+Code pushed to GitHub.
+Jenkins pulls the code, builds it, runs tests, security checks.
+If all checks pass, deploys the application to Kubernetes.
+
+Phase 4: Secure Your Cluster (RBAC)
+By default, Kubernetes gives full permissions to the “root” user — bad practice!
+
+Solution: Create a Service Account with limited permissions:
+
+Only allow deployment, not deletion or full control.
+Apply permissions namespace-specific or cluster-wide (as needed).
+This practice is called Role-Based Access Control (RBAC).
+
+Phase 5: Monitoring Setup
+Helm will be used to install monitoring tools inside Kubernetes:
+
+Prometheus: Metrics collection.
+Grafana: Beautiful dashboards for visualization.
+Tools on Linux VM (Outside K8s)
+Jenkins: For CI/CD pipelines.
+
+SonarQube: For code analysis and quality checks. Finds bugs, vulnerabilities, and code smells before deployment.
+
+Nexus: As an artifact repository.
+
+Stores built artifacts (like .jar files for Java) for version control and management.
+Real-World Practices
+
+Instead of putting everything into Kubernetes, we’ll keep Jenkins, Nexus, and SonarQube on separate Linux servers (real companies do this if they’re not managing 20–30 projects).
+
+This saves resources and keeps things simpler for small setups.
+
+Final Flow Recap:
+Setup GitHub repository & Infra (AWS + K8s).
+Use Terraform & eksctl to provision the K8s cluster.
+Configure Jenkins, SonarQube, Nexus on Linux VMs (not inside K8s).
+Build CI/CD pipelines to automate builds, tests, vulnerability scans, and deployments.
+Create RBAC policies with Service Accounts for Kubernetes deployments. To secure.
+Setup monitoring with Prometheus & Grafana using Helm.
+Achieve a full DevSecOps + Cloud DevOps workflow covering code to deployment to monitoring.
+End-to-End Flow of the Whole CI/CD Process
+Now, let’s recap everything you explained, but in a simple, step-by-step CI/CD flow:
+
+CI/CD Pipeline (Continuous Integration & Continuous Deployment)
+1. Code Management in Git Repository
+Developers push their code changes (application + CI/CD configs) into a GitHub/GitLab repository.
+We configure a webhook in GitHub to automatically trigger the Jenkins pipeline when new code is pushed.
+2. Jenkins CI Pipeline Triggers
+The Jenkins CI pipeline is automatically triggered without manual intervention.
+3. Build & Test Stage
+Compilation: Checks for syntax errors (e.g., missing brackets, commas).
+Unit Testing: Runs automated tests (test cases) to verify the application logic.
+Code Quality Check (SonarQube):
+Scans the code for bugs, vulnerabilities, and bad practices (Static Application Security Testing — SAST)
+Checks for code duplication, style issues, and logic errors.
+Enforces Quality Gate: e.g., “No more than 10 critical issues allowed.”
+Code Coverage: Measures how much code is covered by tests (e.g., 80% minimum).
+4. Security Checks (DevSecOps)
+Trivy FS Scan: Scans the repo files for misconfigurations (Kubernetes YAMLs, etc.)
+GitLeaks: Checks for hardcoded secrets (API keys, passwords) in the source code.
+Trivy Image Scan: Scans the built Docker image for vulnerabilities.
+5. Build Artifacts & Docker Images
+Build Artifacts: Generates output files (e.g., .jar, .war, .zip) stored in Nexus Repository.
+Docker Build: Packages the app + dependencies into a Docker Image.
+Docker Registry: Pushes the image to a private Docker registry (e.g., Nexus, AWS ECR, Azure ACR).
+6. Update CD Repository
+After a successful CI build, the CD repository (with Kubernetes manifests) is updated with the new Docker image tag.
+This ensures the CD pipeline always deploys the latest version.
+7. Email Notifications
+Jenkins sends email notifications (Outlook, Gmail) to the Dev/QA teams about pipeline results.
+CD Pipeline (Continuous Deployment)
+8. CD Pipeline Trigger
+The update in the CD repository triggers the Jenkins CD pipeline.
+9. Kubernetes Deployment
+Deployment YAML: Creates a Deployment → ReplicaSet → Pods.
+Service YAML: Creates a Service to expose the app internally.
+MySQL Deployment:
+Creates a database Pod, with a Persistent Volume (PV) and Persistent Volume Claim (PVC).
+EBS (AWS) or other storage classes provide persistent disk storage.
+10. Ingress Configuration
+Ingress Resource handles routing of external traffic.
+Ingress Controller (NGINX/ALB) manages incoming requests and distributes them.
+Maps external URLs to internal Kubernetes services.
+10. DNS Configuration
+Domain Name (e.g., app.mybankapp.com) is mapped to the Ingress Controller IP/hostname using:
+A Record (for IP) or
+CNAME Record (for hostname).
+DNS Configuration: A Record vs CNAME Record
+Once your Ingress is set up in Kubernetes, you’ll get an external IP or DNS hostname (from the Load Balancer or Ingress Controller).
+But you want to map this to a custom domain like mybankapp.com or app.mycompany.com.
+
+A Record (Address Record):
+
+This maps a domain name directly to an IP address (IPv4).
+If your Ingress gives you a static public IP (like in cloud providers), you’ll create an A Record in your domain registrar (like GoDaddy, Namecheap, or AWS Route 53).
+Example:
+
+mybankapp.com -> 52.123.45.67
+CNAME Record (Canonical Name):
+
+This maps a subdomain (like www or app) to another domain name (hostname).
+This is useful when your Ingress gives a DNS name (like ingress-controller.k8s-provider.com).
+Example:
+app.mybankapp.com -> ingress-controller.k8s-provider.com
+Setup VMs for Jenkins, SonarQube, Nexus, and Central Server
+Create 4 VMs in AWS:
+Jenkins: Ubuntu 20.04 LTS, t2.large (more memory).
+SonarQube & Nexus: Ubuntu 20.04 LTS, t2.medium.
+Central Server: Ubuntu 20.04 LTS, t2.medium (for Terraform & AWS CLI).
+
+2. Open Security Groups:
+
+Allow inbound ports for SSH (22), HTTP (80), HTTPS (443), Jenkins (8080), SonarQube (9000), Nexus (8081).
+3. Connect to VMs via MobaXterm ( if you are using windows):
+
+Save sessions with public IPs, user ubuntu, and SSH keys.
+Update and upgrade packages:
+sudo apt update && sudo apt upgrade -y
+EKS cluster Setup with Central Server
+Configure AWS Access, Terraform Installation, EKS Cluster Setup on Central Server
+Install AWS CLI:
+
+sudo apt install awscli -y
+Configure AWS Credentials (use root user or IAM user with EKS permissions):
+
+aws configure
+📂Install Terraform (from HashiCorp repo, not snap)
+
+Add HashiCorp GPG key and repo
+
+Install Terraform:
+
+📂Clone Terraform Repository & Deploy EKS
+
+Clone your Infrastructure-as-Code repo (ensure a Personal Access Token if private):
+
+git clone https://github.com/amitsinghs98/Mega-Project-Terraform.git
+cd Mega-Project-Terraform
+
+Initialize and apply Terraform configuration:
+
+Note: Before initializing make sure you update SSH Key-name in the variable.tf file according to your file.
+
+terraform init
+terraform apply --auto-approve
+✅ EKS cluster is created
+
+Set Up Jenkins (on Jenkins VM):
+Install Java: sudo apt install openjdk-11-jdk
+Install Jenkins using the official Debian-based steps
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+Open Jenkins URL: http://<public-ip>:8080
+Unlock Jenkins using the initial password (sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
+Install suggested plugins during setup
+SonarQube Setup On SonarQube VM
+Download and install SonarQube (or use Docker for easier setup).
+Open ports 9000 and access SonarQube at http://<SonarQube-IP>:9000
+Initial admin login: admin/admin, then change password.
+
+SonarQube for code analysis
+Nexus Setup On Nexus VM
+Download and install Nexus (or use Docker).
+Open port 8081 and access Nexus at http://<Nexus-IP>:8081.
+Initial admin login: Retrieve password from admin.password file in the Nexus data directory.
+
+Nexus for artifact management.
+Setting Up Jenkins with Essential Plugins and Configurations
+Install Jenkins Plugins
+Search and install these:
+
+SonarQube
+
+SonarQube requires two components:
+SonarQube Scanner (the tool that scans and generates the report).
+SonarQube Server (the server where reports are published for developers to view).
+Config File Provider
+
+Useful for managing external configuration files within Jenkins pipelines.
+Maven Integration
+
+Essential for Maven builds in your pipeline.
+Docker Pipeline
+
+Required to use Docker within your Jenkins pipelines.
+Kubernetes Plugins (many of them are interdependent):
+
+Kubernetes
+Kubernetes CLI
+Kubernetes Credentials
+Kubernetes Pipeline
+Kubernetes Client API
+Install these plugins.
+
+Install Docker on the Jenkins Server VM
+Since Jenkins will need to run Docker commands, we need Docker installed on the host.
+
+Grant Docker Permissions to Jenkins User
+Use the following command to add jenkins to the docker group:
+
+sudo usermod -aG docker jenkins
+-aG flag means:
+
+a = append (don’t remove existing groups)
+G = group (add to the Docker group)
+This ensures that the jenkins user retains its existing groups while being granted Docker access.
+
+sudo systemctl restart jenkins
+💡 Pro Tip:
+
+If the Jenkins user’s group change isn’t applied even after newgrp docker, it’s because Jenkins runs as a service, and the session needs a restart. A system restart or Jenkins service restart will solve it.
+
+Configuring Maven and SonarQube in Jenkins (Manage Jenkins -> Tools Section)
+Log in to Jenkins
+Open Manage Jenkins from the dashboard.
+Go to the Global Tool Configuration section.
+
+Configure Maven
+In the Maven section, click Add Maven.
+Enter a name (e.g., Maven 3).
+Select the Maven version (choose any, preferably a stable one).
+
+Configure SonarQube Scanner
+In the SonarQube Scanner section, click Add SonarQube Scanner.
+Enter a name (e.g., Sonar-Scanner).
+Select the SonarQube Scanner version (choose the latest stable version).
+
+
+Step 1: Create a New Jenkins Pipeline Job
+1️⃣ Go to Jenkins Dashboard → New Item
+2️⃣ Give it a name (e.g., CI-Pipeline)
+3️⃣ Select Pipeline as the type
+4️⃣ Click OK
+
+Step 2: Limit Build History to Save Space
+In the configuration page, scroll to Discard Old Builds
+Check the box and set Max # of builds to keep = 3
+Step 3: Write the Pipeline Script
+We’ll write the pipeline script in the Pipeline section under Definition: Pipeline script.
+
+Instead of writing from scratch, let’s use the Pipeline Syntax Generator (amazing tool!):
+
+Click Pipeline Syntax (near the Pipeline section)
+Select different steps and generate code.
+Step 4: Checkout the Source Code
+Open Pipeline Syntax → Checkout SCM
+Select Git
+Provide:
+Repository URL — e.g., https://github.com/your-repo.git
+Branch — e.g., main
+Credentials — Add username and password/token in Manage Jenkins → Credentials → Global
+🔑 To add credentials:
+
+Go to Manage Jenkins → Credentials → Global → Add Credentials
+Choose Username & Password
+Username: your GitHub username
+Password: your GitHub Personal Access Token
+Copy the generated snippet from Pipeline Syntax and paste it into your script.
+
+Step 5: Compile the Code Using Maven
+Define Maven tool in Jenkins → Global Tool Configuration (e.g., Maven 3)
+
+In pipeline, declare:
+tools {
+    maven 'Maven 3'
+}
+Add a stage for compilation:
+stage('Compile') {
+    steps {
+        sh 'mvn compile'
+    }
+}
+Step 6: Run Unit Tests
+stage('Test') {
+    steps {
+        sh 'mvn test'
+    }
+}
+Note: To run maven test and compile you need to have JDK plugin for smooth flow, configure in global tools. JDK17 and automatically install with help of optimun (select version 17).
+
+Step 7: Install and Use Trivy for Security Scanning
+Install Trivy on Jenkins server (not inside Jenkins UI):
+
+Add a stage to run Trivy:
+
+stage('Trivy FS Scan') {
+    steps {
+        sh 'trivy fs --format table --output fs-report.html .'
+    }
+}
+Step 8: Configure SonarQube for Code Quality Analysis
+Note: We have already configured SonarQube scanner with help of jenkins plugin. Now we need to configure sonarqube server -> to publish the report of sonarqube scanner.
+
+First: You need to generate token from SonarQube -> Admin -> Security -> Users -> Generate Token
+
+
+Second: Add this token inside your Jenkins Credentials as -> Secret Text
+
+
+Note: In manage jenkins > System (is where you can configure servers/ jenkins backend system config)
+
+Go to Manage Jenkins → System → SonarQube server
+Click Add SonarQube
+Name: sonar
+Server URL: e.g., http://your-sonarqube-server:9000
+Credentials: Add Secret Text with SonarQube token
+
+Configured sonarqube server as well.
+3. Configure SonarQube Scanner in Global Tool Configuration
+
+Name: sonar-scanner
+4. Add a SonarQube stage:
+
+ stage('Code Quality Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar-projectName=GCBank -Dsonar.projectKey=GCBank \
+                            -Dsonar.java.binaries=target '''
+                }
+            }
+        }
+Step9: Quality Gate Check
+We need to create a webhook in SonarQube Server in order make this stage run
+
+
+Step 10: Define Build Stage for Maven
+Goal: Package the Java project into a .jar using Maven.
+stage('Build') {
+    steps {
+        sh 'mvn package'
+    }
+}
+Step 10: Add Publish Artifacts Stage to Nexus
+Goal: Deploy the .jar to Nexus (Releases or Snapshots repo).
+Pre-requisites:
+Add the distribution management section to your pom.xml with Nexus URLs.
+Example:
+
+<distributionManagement> <repository> <id>releases</id> <url>http://nexus.yourcompany.com/repository/maven-releases/</url> </repository> <snapshotRepository> <id>snapshots</id> <url>http://nexus.yourcompany.com/repository/maven-snapshots/</url> </snapshotRepository> </distributionManagement>
+Add Maven settings.xml for credentials:
+Go to Jenkins > Manage Jenkins > Managed Files (requires Config File Provider plugin).
+Create Global Maven settings (ID: devopshack).
+Add <server> section with Nexus credentials:
+<servers> <server> <id>releases</id> <username>admin</username> <password>adminpassword</password> </server> <server> <id>snapshots</id> <username>admin</username> <password>adminpassword</password> </server> </servers>
+Pipeline Stage:
+
+stage('Publish Artifacts to Nexus') {
+    steps {
+        withMaven(
+            maven: 'M3', // or your installed Maven
+            mavenSettingsConfig: 'devopshack'
+        ) {
+            sh 'mvn deploy'
+        }
+    }
+}
+Build and Tag Docker Imag
+Goal: Build and tag Docker images dynamically using Jenkins build number.
+Pre-requisites:
+Use build number as the dynamic version.
+Store image tag as environment variable.
+environment {
+    IMAGE_TAG = "v${BUILD_NUMBER}"
+}
+stage('Build and Tag Docker Image') {
+    steps {
+        script {
+            sh "docker build -t yourdockerhub/yourapp:${IMAGE_TAG} ."
+        }
+    }
+}
+Docker Image Scanning with Trivy
+Goal: Scan the built Docker image for vulnerabilities.
+stage('Scan Docker Image') {
+    steps {
+        sh "trivy image --format table --output scan-report-${IMAGE_TAG}.txt yourdockerhub/yourapp:${IMAGE_TAG}"
+    }
+}
+Push Docker Image to Registry
+Goal: Push the Docker image to Docker Hub (or your registry).
+Pre-requisites:
+Add Docker registry credentials in Jenkins (Manage Jenkins > Credentials > Global).
+stage('Push Docker Image') {
+    steps {
+        withDockerRegistry([credentialsId: 'dockercreds']) {
+            sh "docker push yourdockerhub/yourapp:${IMAGE_TAG}"
+        }
+    }
+}
+Automate Trigger using GitHub Webhook
+Goal: Trigger Jenkins pipeline on main branch push.
+Pre-requisites:
+
+Install Generic Webhook Trigger plugin.
+Configure token-based webhook.
+Jenkins Configuration:
+Go to Job > Configure > Add Generic Webhook Trigger.
+Configure:
+Token: devopshack
+Post Content Parameters:
+Variable: ref
+Expression: $.ref
+Optional Filter: ref == 'refs/heads/main'
+GitHub Webhook Setup:
+
+Go to GitHub repo > Settings > Webhooks.
+Add webhook URL:
+http://yourjenkinsserver.com/generic-webhook-trigger/invoke?token=devopshack
+Select Just the push event.
+Save the webhook.
+
+(Optional) Verify Everything
+Run manually:
+Start the Jenkins pipeline and observe the stages: Build, Deploy to Nexus, Docker Build, Trivy Scan, Docker Push.
+Push to GitHub:
+Commit and push to main branch to auto-trigger the build via webhook.

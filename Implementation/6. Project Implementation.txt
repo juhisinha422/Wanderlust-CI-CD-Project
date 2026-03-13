@@ -1,0 +1,12 @@
+Project Implementation.pdf
+
+how to use Terraform to deploy and configure a fully-featured, private EKS cluster complete with:
+🔹 ArgoCD for GitOps-powered deployments
+ 🔹 Prometheus & Grafana for real-time monitoring & dashboards
+ 🔹 AWS Load Balancer Controller for seamless traffic management
+
+Why this matters:
+ ✅ Infrastructure as Code: Versionable, repeatable and auditable
+ ✅ Automated & Scalable: Spin up environments in minutes
+ ✅ Secure by Design: Private clusters with minimal manual intervention
+Whether you’re building greenfield clusters or optimizing existing ones, this guide will help you level up your DevOps game. 🔧💡

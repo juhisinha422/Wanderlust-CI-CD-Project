@@ -1,0 +1,27 @@
+Implementation of Wanderlust Project
+
+Just deployed a 3-tier web application with end-to-end DevSecOps integration!
+
+Implemented a full CI/CD pipeline integrating:
+ 1.DevSecOps practices with OWASP Dependency Check, Trivy, and SonarQube
+ 2. GitOps using ArgoCD
+ 3. Terraform for Infrastructure as Code
+ 4. AWS with EKS, Docker, Jenkins, and GitHub for seamless automation.
+ 5. Real-time observability using Prometheus and Grafana
+
+But here’s what really made it meaningful:
+It wasn’t just about building pipelines. It was about fixing things when they broke.
+And trust me—they broke a lot! 
+ From permission issues to broken builds, from Docker image errors to YAML headaches—I spent a lot of time debugging, researching, and reworking. And that’s where the real learning happened.
+
+It reminded me that knowing tools is one thing, but solving real problems with them is what makes you better.
+
+This project strengthened my fundamentals and gave me the confidence to handle real-world scenarios.
+It was a great hands-on experience bringing together multiple tools to mimic a real-world production workflow.
+
+=========
+Ways to update image tag in GitHub manifest file? Using argocd image updater?? Or shell script? Or if it can be done Directly from jenkins
+
+1. Using ArgoCD Image Updater – It automatically updates the image tag in the GitHub manifest.
+2. Using Shell Script – A custom shell script updates the image tag and pushes to GitHub.
+3. Directly from Jenkins – Jenkins pipeline handles the tag update and Git push

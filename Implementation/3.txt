@@ -1,0 +1,18 @@
+🚀 Successfully Deployed a 3-Tier Website Using DevOps Automation! 🔧🌐
+Deployed a production-ready website by implementing a robust DevOps pipeline – all automated from code commit to Kubernetes deployment!
+
+🧑‍💻 Development & Version Control
+Developers push code to GitHub, triggering the Jenkins CI pipeline.
+🔄 CI Pipeline (Jenkins)
+Pulls code and checks dependencies via OWASP.
+Performs code analysis using SonarQube.
+Scans the container filesystem for vulnerabilities with Trivy.
+Builds and pushes Docker images to the registry.
+🚀 CD Pipeline (Jenkins)
+Automatically updates Docker image versions.
+Triggers ArgoCD to pull the latest image and deploy it to Kubernetes (K8s).
+📡 Monitoring & Notification
+Email notifications are sent upon deployment.
+Real-time monitoring is handled by Prometheus and Grafana dashboards.
+🔐 Security + Quality + Speed – all integrated into one automated workflow!
+This was an incredible hands-on learning experience, and I’m proud of how each component came together to form a seamless delivery pipeline.
